@@ -62,6 +62,8 @@ def layers(vgg_layer3_out, vgg_layer4_out, vgg_layer7_out, num_classes):
     conv3 = tf.layers.conv2d(vgg_layer3_out, num_classes, 1, padding='same'
                             kernel_initializer=init, kernal_regularizer=reg)
 
+    conv4 = tf.layers.conv2d(vgg_layer4_out, num_classes, 1, padding='same',
+                                   kernel_initializer=init, kernel_regularizer=reg)
     return output
 tests.test_layers(layers)
 
