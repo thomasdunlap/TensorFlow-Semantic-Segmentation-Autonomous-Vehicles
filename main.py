@@ -56,7 +56,13 @@ def layers(vgg_layer3_out, vgg_layer4_out, vgg_layer7_out, num_classes):
     :return: The Tensor for the last layer of output
     """
     # TODO: Implement function
-    return None
+    init = tf.truncated_normal_initializater(stddev = 0.01)
+    reg = tf.contrib.layers.l2_regularizer(.001)
+
+    conv3 = tf.layers.conv2d(vgg_layer3_out, num_classes, 1, padding='same'
+                            kernel_initializer=init, kernal_regularizer=reg)
+
+    return output
 tests.test_layers(layers)
 
 
