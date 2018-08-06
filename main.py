@@ -157,14 +157,31 @@ def run():
         #  https://datascience.stackexchange.com/questions/5224/how-to-prepare-augment-images-for-neural-network
 
         # TODO: Build NN using load_vgg, layers, and optimize function
-
+        input_image, keep_prob, layer3_out, layer4_out, vgg_layer7_out = load_vgg(sess, vgg_path)
+        final_layer = layers(layer3_out, layer4_out, layer7_out, num_classes)
+        label = tf.placeholder(tf.int32, shape=[None, None, None, num_classes])
+        learning_rate = tf.placeholder(tf.float32)
+        logits, train_op, loss = optimize(final_layer, label, learning_rate, num_classes)
         # TODO: Train NN using the train_nn function
+        saver = tf.train.Saver()
+
+        saver.restore(sess, './runs/sem_seg_model.ckpt')
+
+        sess.run(tf.global_variables_initializer())
+        train_nn(sess, epochs, batches, get_batches_fn, train_op, loss,
+                input_image, label, keep_prob, learning_rate)
 
         # TODO: Save inference data using helper.save_inference_samples
-        #  helper.save_inference_samples(runs_dir, data_dir, sess, image_shape, logits, keep_prob, input_image)
+        helper.save_inference_samples(runs_dir, data_dir, sess, image_shape, logits, keep_prob, input_image)
 
         # OPTIONAL: Apply the trained model to a video
+        data_sub_dir = 'project_video'
+        helper.save_to_clip(data_sub_dir, data_dir, sess, image_shape, logits, keep_prob, input_image)
 
+        data_sub_dir = 'challenge_video'
+        helper.save_to_clip(data_sub_dir, data_dir, sess, image_shape, logits, keep_prob, input_image)
+
+        saver.restore(sess, './runs/sem_seg_model.ckpt')
 
 if __name__ == '__main__':
     run()
