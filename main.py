@@ -60,10 +60,27 @@ def layers(vgg_layer3_out, vgg_layer4_out, vgg_layer7_out, num_classes):
     reg = tf.contrib.layers.l2_regularizer(.001)
 
     conv3 = tf.layers.conv2d(vgg_layer3_out, num_classes, 1, padding='same'
-                            kernel_initializer=init, kernal_regularizer=reg)
+                            kernel_initializer=init, kernel_regularizer=reg)
 
     conv4 = tf.layers.conv2d(vgg_layer4_out, num_classes, 1, padding='same',
-                                   kernel_initializer=init, kernel_regularizer=reg)
+                            kernel_initializer=init, kernel_regularizer=reg)
+
+    conv7 = tf.layers.conv2d(vgg_layer7_out, num_classes, 1, padding='same',
+                            kernel_initializer=init, kernel_regularizer=reg)
+
+    transp1 = tf.layers.conv2d_transpose(conv7, num_classes, 4, 2, padding='same',
+                                kernel_initializer=init, kernel_regularizer=reg)
+
+    skip1 = tf.add(transp1, conv4)
+
+    transp2 = tf.layers.conv2d_transpose(skip1, num_classes, 4, 2, padding='same',
+                                            kernel_initializer=init, kernel_regularizer=reg)
+
+    skip2 = tf.add(transp2, conv3)
+
+    output = tf.layers.conv2d_transpose(skip2, num_classes, 16, 8, padding='same',
+                                        kernel_initializer=init, kernel_regularizer=reg)
+
     return output
 tests.test_layers(layers)
 
