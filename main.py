@@ -134,10 +134,12 @@ tests.test_train_nn(train_nn)
 
 
 def run():
+    epochs = 2
+    batch_size = 128
     num_classes = 2
     image_shape = (160, 576)
     data_dir = './data'
-    runs_dir = './runs'
+    ckpt_dir = './checkpoints'
     tests.test_for_kitti_dataset(data_dir)
 
     # Download pretrained vgg model
@@ -165,14 +167,14 @@ def run():
         # TODO: Train NN using the train_nn function
         saver = tf.train.Saver()
 
-        saver.restore(sess, './runs/sem_seg_model.ckpt')
+        #saver.restore(sess, './checkpoints/sem_seg_model.ckpt')
 
         sess.run(tf.global_variables_initializer())
         train_nn(sess, epochs, batches, get_batches_fn, train_op, loss,
                 input_image, label, keep_prob, learning_rate)
 
         # TODO: Save inference data using helper.save_inference_samples
-        helper.save_inference_samples(runs_dir, data_dir, sess, image_shape, logits, keep_prob, input_image)
+        helper.save_inference_samples(ckpt_dir, data_dir, sess, image_shape, logits, keep_prob, input_image)
 
         # OPTIONAL: Apply the trained model to a video
         data_sub_dir = 'project_video'
@@ -181,7 +183,7 @@ def run():
         data_sub_dir = 'challenge_video'
         helper.save_to_clip(data_sub_dir, data_dir, sess, image_shape, logits, keep_prob, input_image)
 
-        saver.restore(sess, './runs/sem_seg_model.ckpt')
+        saver.restore(sess, './checkpoints/sem_seg_model.ckpt')
 
 if __name__ == '__main__':
     run()
