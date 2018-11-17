@@ -127,7 +127,7 @@ def train_nn(sess, epochs, batch_size, get_batches_fn, train_op, cross_entropy_l
     for e in range(epochs):
         for i, (img, label) in enumerate(get_batches_fn(batch_size)):
             _, loss = sess.run([train_op, cross_entropy_loss],
-                                feed_dict={input_image:img, correct_label:label, keep_prob:0.5, learning_rate:.0001})
+                                feed_dict={input_image:img, correct_label:label, keep_prob:0.5, learning_rate:.0009})
 
     print("Epoch: {}\tBatch: {}\tLoss: {}".format(e+1, i, loss))
 tests.test_train_nn(train_nn)
