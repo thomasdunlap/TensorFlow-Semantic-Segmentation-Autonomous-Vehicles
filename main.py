@@ -127,15 +127,15 @@ def train_nn(sess, epochs, batch_size, get_batches_fn, train_op, cross_entropy_l
     for e in range(epochs):
         for i, (img, label) in enumerate(get_batches_fn(batch_size)):
             _, loss = sess.run([train_op, cross_entropy_loss],
-                                feed_dict={input_image:img, correct_label:label, keep_prob:0.375})
+                                feed_dict={input_image:img, correct_label:label, keep_prob:0.5, learning_rate:.0001})
 
     print("Epoch: {}\tBatch: {}\tLoss: {}".format(e+1, i, loss))
 tests.test_train_nn(train_nn)
 
 
 def run():
-    epochs = 2
-    batch_size = 128
+    epochs = 10
+    batch_size = 5
     num_classes = 2
     image_shape = (160, 576)
     data_dir = './data'
@@ -161,8 +161,8 @@ def run():
         # TODO: Build NN using load_vgg, layers, and optimize function
         input_image, keep_prob, layer3_out, layer4_out, layer7_out = load_vgg(sess, vgg_path)
         final_layer = layers(layer3_out, layer4_out, layer7_out, num_classes)
-        label = tf.placeholder(tf.int32, shape=[None, None, None, num_classes])
-        learning_rate = tf.placeholder(tf.float32)
+        label = tf.placeholder(tf.int32, shape=[None, None, None, num_classes], name='label')
+        learning_rate = tf.placeholder(tf.float32, name='learning_rate')
         logits, train_op, loss = optimize(final_layer, label, learning_rate, num_classes)
         # TODO: Train NN using the train_nn function
         saver = tf.train.Saver()
@@ -170,7 +170,7 @@ def run():
         #saver.restore(sess, './checkpoints/sem_seg_model.ckpt')
 
         sess.run(tf.global_variables_initializer())
-        train_nn(sess, epochs, batches, get_batches_fn, train_op, loss,
+        train_nn(sess, epochs, batch_size, get_batches_fn, train_op, loss,
                 input_image, label, keep_prob, learning_rate)
 
         # TODO: Save inference data using helper.save_inference_samples
