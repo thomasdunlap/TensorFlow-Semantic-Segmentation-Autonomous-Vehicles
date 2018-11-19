@@ -166,7 +166,6 @@ def run():
         logits, train_op, loss = optimize(final_layer, label, learning_rate, num_classes)
         # TODO: Train NN using the train_nn function
         saver = tf.train.Saver()
-
         #saver.restore(sess, './checkpoints/sem_seg_model.ckpt')
 
         sess.run(tf.global_variables_initializer())
