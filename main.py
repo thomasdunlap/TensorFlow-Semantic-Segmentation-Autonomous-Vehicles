@@ -129,17 +129,17 @@ def train_nn(sess, epochs, batch_size, get_batches_fn, train_op, cross_entropy_l
             _, loss = sess.run([train_op, cross_entropy_loss],
                                 feed_dict={input_image:img, correct_label:label, keep_prob:0.5, learning_rate:.0009})
 
-    print("Epoch: {}\tBatch: {}\tLoss: {}".format(e+1, i, loss))
+            print("Epoch: {}\tBatch: {}\tLoss: {}".format(e+1, i, loss))
 tests.test_train_nn(train_nn)
 
 
 def run():
-    epochs = 10
+    epochs = 50
     batch_size = 5
     num_classes = 2
     image_shape = (160, 576)
     data_dir = './data'
-    ckpt_dir = './checkpoints'
+    ckpt_dir = './runs'
     tests.test_for_kitti_dataset(data_dir)
 
     # Download pretrained vgg model
@@ -166,7 +166,7 @@ def run():
         logits, train_op, loss = optimize(final_layer, label, learning_rate, num_classes)
         # TODO: Train NN using the train_nn function
         saver = tf.train.Saver()
-        #saver.restore(sess, './checkpoints/sem_seg_model.ckpt')
+        #saver.restore(sess, './runs/sem_seg_model.ckpt')
 
         sess.run(tf.global_variables_initializer())
         train_nn(sess, epochs, batch_size, get_batches_fn, train_op, loss,
@@ -182,7 +182,7 @@ def run():
         data_sub_dir = 'challenge_video'
         helper.save_to_clip(data_sub_dir, data_dir, sess, image_shape, logits, keep_prob, input_image)
 
-        saver.restore(sess, './checkpoints/sem_seg_model.ckpt')
+        saver.restore(sess, './runs/sem_seg_model.ckpt')
 
 if __name__ == '__main__':
     run()
