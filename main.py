@@ -56,8 +56,8 @@ def layers(vgg_layer3_out, vgg_layer4_out, vgg_layer7_out, num_classes):
     :return: The Tensor for the last layer of output
     """
     # TODO: Implement function
-    init = tf.truncated_normal_initializer(stddev = 0.01)
-    reg = tf.contrib.layers.l2_regularizer(.001)
+    init = tf.random_normal_initializer(stddev = 0.001)
+    reg = tf.contrib.layers.l2_regularizer(.00001)
 
     conv3 = tf.layers.conv2d(vgg_layer3_out, num_classes, 1, padding='same',
                             kernel_initializer=init, kernel_regularizer=reg)
@@ -127,15 +127,15 @@ def train_nn(sess, epochs, batch_size, get_batches_fn, train_op, cross_entropy_l
     for e in range(epochs):
         for i, (img, label) in enumerate(get_batches_fn(batch_size)):
             _, loss = sess.run([train_op, cross_entropy_loss],
-                                feed_dict={input_image:img, correct_label:label, keep_prob:0.5, learning_rate:.0009})
+                                feed_dict={input_image:img, correct_label:label, keep_prob:0.5, learning_rate:.00033})
 
             print("Epoch: {}\tBatch: {}\tLoss: {}".format(e+1, i, loss))
 tests.test_train_nn(train_nn)
 
 
 def run():
-    epochs = 50
-    batch_size = 5
+    epochs = 20
+    batch_size = 16
     num_classes = 2
     image_shape = (160, 576)
     data_dir = './data'
