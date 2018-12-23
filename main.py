@@ -176,12 +176,7 @@ def run():
         helper.save_inference_samples(ckpt_dir, data_dir, sess, image_shape, logits, keep_prob, input_image)
 
         # OPTIONAL: Apply the trained model to a video
-        data_sub_dir = 'project_video'
-        helper.save_to_clip(data_sub_dir, data_dir, sess, image_shape, logits, keep_prob, input_image)
-
-        data_sub_dir = 'challenge_video'
-        helper.save_to_clip(data_sub_dir, data_dir, sess, image_shape, logits, keep_prob, input_image)
-
+        
         saver.restore(sess, './runs/sem_seg_model.ckpt')
 
 if __name__ == '__main__':
