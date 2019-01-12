@@ -152,8 +152,10 @@ def run():
     # OPTIONAL: Train and Inference on the cityscapes dataset instead of the Kitti dataset.
     # You'll need a GPU with at least 10 teraFLOPS to train on.
     #  https://www.cityscapes-dataset.com/
-
-    with tf.Session() as sess:
+    #gpu_config = tf.ConfigProto()
+    #gpu_config.gpu_options.per_process_gpu_memory_fraction = .4
+    #gpu_config.gpu_options.allow_growth = True
+    with tf.Session(config=gpu_config) as sess:
         # Path to vgg model
         vgg_path = os.path.join(data_dir, 'vgg')
         # Create function to get batches
