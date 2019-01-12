@@ -25,8 +25,8 @@ def load_vgg(sess, vgg_path):
     :param vgg_path: Path to vgg folder, containing "variables/" and "saved_model.pb"
     :return: Tuple of Tensors from VGG model (image_input, keep_prob, layer3_out, layer4_out, layer7_out)
     """
-    # TODO: Implement function
-    #   Use tf.saved_model.loader.load to load the model and weights
+
+    # Assign required parts of model to variables
     vgg_tag = 'vgg16'
     vgg_input_tensor_name = 'image_input:0'
     vgg_keep_prob_tensor_name = 'keep_prob:0'
@@ -34,14 +34,17 @@ def load_vgg(sess, vgg_path):
     vgg_layer4_out_tensor_name = 'layer4_out:0'
     vgg_layer7_out_tensor_name = 'layer7_out:0'
 
+    #  Use tf.saved_model.loader.load to load the model and weights
     tf.saved_model.loader.load(sess, [vgg_tag], vgg_path)
+    # Reads MetaGraphDef loaded by model, returns most recent saved computation of graph
     graph = tf.get_default_graph()
+    # Allows us to call individual layers to train by name
     image_input = graph.get_tensor_by_name(vgg_input_tensor_name)
     keep_prob = graph.get_tensor_by_name(vgg_keep_prob_tensor_name)
     layer3_out = graph.get_tensor_by_name(vgg_layer3_out_tensor_name)
     layer4_out = graph.get_tensor_by_name(vgg_layer4_out_tensor_name)
     layer7_out = graph.get_tensor_by_name(vgg_layer7_out_tensor_name)
-
+    # Return layers for training while the rest remain frozen
     return image_input, keep_prob, layer3_out, layer4_out, layer7_out
 tests.test_load_vgg(load_vgg, tf)
 
@@ -55,8 +58,9 @@ def layers(vgg_layer3_out, vgg_layer4_out, vgg_layer7_out, num_classes):
     :param num_classes: Number of classes to classify
     :return: The Tensor for the last layer of output
     """
-    # TODO: Implement function
+    # Initialize weights with random normal distribution
     init = tf.random_normal_initializer(stddev = 0.001)
+    # Set boundary of regularizer
     reg = tf.contrib.layers.l2_regularizer(.00001)
 
     conv3 = tf.layers.conv2d(vgg_layer3_out, num_classes, 1, padding='same',
@@ -176,7 +180,7 @@ def run():
         helper.save_inference_samples(ckpt_dir, data_dir, sess, image_shape, logits, keep_prob, input_image)
 
         # OPTIONAL: Apply the trained model to a video
-        
+
         saver.restore(sess, './runs/sem_seg_model.ckpt')
 
 if __name__ == '__main__':
