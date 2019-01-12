@@ -138,48 +138,48 @@ tests.test_train_nn(train_nn)
 
 
 def run():
-    epochs = 20
-    batch_size = 16
-    num_classes = 2
-    image_shape = (160, 576)
-    data_dir = './data'
-    ckpt_dir = './runs'
-    tests.test_for_kitti_dataset(data_dir)
+    EPOCHS = 20
+    BATCH_SIZE = 16
+    NUM_CLASSES = 2
+    IMAGE_SHAPE = (160, 576)
+    DATA_DIR = './data'
+    CKPT_DIR = './runs'
+    tests.test_for_kitti_dataset(DATA_DIR)
 
     # Download pretrained vgg model
-    helper.maybe_download_pretrained_vgg(data_dir)
+    helper.maybe_download_pretrained_vgg(DATA_DIR)
 
     # OPTIONAL: Train and Inference on the cityscapes dataset instead of the Kitti dataset.
     # You'll need a GPU with at least 10 teraFLOPS to train on.
     #  https://www.cityscapes-dataset.com/
-    #gpu_config = tf.ConfigProto()
+    gpu_config = tf.ConfigProto()
     #gpu_config.gpu_options.per_process_gpu_memory_fraction = .4
-    #gpu_config.gpu_options.allow_growth = True
+    gpu_config.gpu_options.allow_growth = True
     with tf.Session(config=gpu_config) as sess:
         # Path to vgg model
-        vgg_path = os.path.join(data_dir, 'vgg')
+        vgg_path = os.path.join(DATA_DIR, 'vgg')
         # Create function to get batches
-        get_batches_fn = helper.gen_batch_function(os.path.join(data_dir, 'data_road/training'), image_shape)
+        get_batches_fn = helper.gen_batch_function(os.path.join(DATA_DIR, 'data_road/training'), IMAGE_SHAPE)
 
         # OPTIONAL: Augment Images for better results
         #  https://datascience.stackexchange.com/questions/5224/how-to-prepare-augment-images-for-neural-network
 
         # TODO: Build NN using load_vgg, layers, and optimize function
         input_image, keep_prob, layer3_out, layer4_out, layer7_out = load_vgg(sess, vgg_path)
-        final_layer = layers(layer3_out, layer4_out, layer7_out, num_classes)
-        label = tf.placeholder(tf.int32, shape=[None, None, None, num_classes], name='label')
+        final_layer = layers(layer3_out, layer4_out, layer7_out, NUM_CLASSES)
+        label = tf.placeholder(tf.int32, shape=[None, None, None, NUM_CLASSES], name='label')
         learning_rate = tf.placeholder(tf.float32, name='learning_rate')
-        logits, train_op, loss = optimize(final_layer, label, learning_rate, num_classes)
+        logits, train_op, loss = optimize(final_layer, label, learning_rate, NUM_CLASSES)
         # TODO: Train NN using the train_nn function
         saver = tf.train.Saver()
         #saver.restore(sess, './runs/sem_seg_model.ckpt')
 
         sess.run(tf.global_variables_initializer())
-        train_nn(sess, epochs, batch_size, get_batches_fn, train_op, loss,
+        train_nn(sess, EPOCHS, BATCH_SIZE, get_batches_fn, train_op, loss,
                 input_image, label, keep_prob, learning_rate)
 
         # TODO: Save inference data using helper.save_inference_samples
-        helper.save_inference_samples(ckpt_dir, data_dir, sess, image_shape, logits, keep_prob, input_image)
+        helper.save_inference_samples(CKPT_DIR, DATA_DIR, sess, IMAGE_SHAPE, logits, keep_prob, input_image)
 
         # OPTIONAL: Apply the trained model to a video
 
