@@ -6,7 +6,10 @@
 ![Semantic Segmentation 5](./runs/1543024307.0486972/uu_000099.png)
 ![Semantic Segmentation 6](./runs/1543024307.0486972/uu_000089.png)
 ### Introduction
-In this project, you'll label the pixels of a road in images using a Fully Convolutional Network (FCN).
+In this project, you'll label the pixels of a road in images using a Fully Convolutional Network (FCN).  We started by loading a frozen pre_trained VGG16 graph, and unfreezing specific layers to be converted from dense layers, to 1D Convolutional to create a fully convolutional encoder for our street image data.
+
+We change the dense layers to 1D convolutions because 1D preserves the depth/spatial information, while dense layers do not.
+
 
 ### Setup
 ##### GPU
