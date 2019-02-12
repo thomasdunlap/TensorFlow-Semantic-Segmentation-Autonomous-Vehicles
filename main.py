@@ -98,14 +98,14 @@ def optimize(nn_last_layer, correct_label, learning_rate, num_classes):
     :param num_classes: Number of classes to classify
     :return: Tuple of (logits, train_op, cross_entropy_loss)
     """
-    # TODO: Implement function
+    # reshape data
     logits = tf.reshape(nn_last_layer, (-1, num_classes))
 
     labels = tf.reshape(correct_label, (-1, num_classes))
 
     cross_entropy_loss = tf.reduce_mean(tf.nn.softmax_cross_entropy_with_logits(logits=logits,
                                                                                 labels=labels))
-
+    
     train_op = tf.train.AdamOptimizer(learning_rate).minimize(cross_entropy_loss)
 
     return logits, train_op, cross_entropy_loss
@@ -127,7 +127,7 @@ def train_nn(sess, epochs, batch_size, get_batches_fn, train_op, cross_entropy_l
     :param keep_prob: TF Placeholder for dropout keep probability
     :param learning_rate: TF Placeholder for learning rate
     """
-    # TODO: Implement function
+
     for e in range(epochs):
         for i, (img, label) in enumerate(get_batches_fn(batch_size)):
             _, loss = sess.run([train_op, cross_entropy_loss],
@@ -164,13 +164,13 @@ def run():
         # OPTIONAL: Augment Images for better results
         #  https://datascience.stackexchange.com/questions/5224/how-to-prepare-augment-images-for-neural-network
 
-        # TODO: Build NN using load_vgg, layers, and optimize function
+        # load training input, keep prob and layers
         input_image, keep_prob, layer3_out, layer4_out, layer7_out = load_vgg(sess, vgg_path)
         final_layer = layers(layer3_out, layer4_out, layer7_out, NUM_CLASSES)
         label = tf.placeholder(tf.int32, shape=[None, None, None, NUM_CLASSES], name='label')
         learning_rate = tf.placeholder(tf.float32, name='learning_rate')
         logits, train_op, loss = optimize(final_layer, label, learning_rate, NUM_CLASSES)
-        # TODO: Train NN using the train_nn function
+    
         saver = tf.train.Saver()
         #saver.restore(sess, './runs/sem_seg_model.ckpt')
 
